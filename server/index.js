@@ -1,6 +1,6 @@
 const express = require("express")
 const cors = require("cors")
-const bcrypt = require("cors")
+const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 const session = require("express-session")
 const cookieParser = require("cookie-parser")
@@ -24,6 +24,7 @@ app.use(cors({
 app.use(session({
   key: "token",
   secret: process.env.NODE_SESSION_SECRET,
+  resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 1000 * 60 // --> 1 min for now
@@ -43,6 +44,45 @@ pool.connect((err, res) => {
   } else {
     console.log("CONNECTED TO DATABASE");
   }
+})
+
+app.post('/signup', (req, res) => {
+  const firstName = req.body.firstName
+  const lastName = req.body.lastName
+  const email = req.body.email
+  const password = req.body.password
+  const confirmPassword = req.body.confirmPassword
+  
+  if (firstName == "" || lastName == "" || email == "" || password == "" || confirmPassword == "") {
+    res.redirect('/signup')
+  }
+
+  bcrypt.hash(password, 10, (err, hash) => {
+    if (err) {
+      console.log("FAILED TO HASH PASSWORD");
+      console.log(err);
+      res.redirect('/signup')
+    } else {
+      pool.connect((err, db) => {
+        db.query(
+          "INSERT INTO users (f_name, l_name, email, password) VALUES ($1, $2, $3, $4)",
+          [firstName, lastName, email, hash],
+          (error, results) => {
+            if (error) {
+              console.log("FAILED TO INSERT USER");
+              console.log(error);
+              res.redirect("/signup")
+            } else {
+              console.log("USER ADDED");
+              res.redirect("/signin")
+            }
+          }
+        )
+      })
+    }
+  })
+
+
 })
 
 app.get("*", (req, res) => {
