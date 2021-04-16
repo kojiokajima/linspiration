@@ -1,0 +1,14 @@
+.signup {
+  display: flex;
+  justify-content: space-between;
+
+  & .signup-hero {
+    width: 50vw;
+    height: 100vh;
+  }
+  
+  & .signup-form {
+    width: 50vw;
+    height: 100vh;
+  }
+}
