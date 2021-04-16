@@ -3,10 +3,12 @@ import {BrowserRouter} from 'react-router-dom'
 import Router from './Router'
 import logo from './logo.svg';
 import './App.css';
+import './assets/styles/main.scss'
 
 function App() {
   return (
     <div className="App">
+    {/* <div> */}
       <BrowserRouter>
         <Router />
       </BrowserRouter>
