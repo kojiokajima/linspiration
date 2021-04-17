@@ -27,7 +27,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 60 // --> 1 min for now
+    maxAge: 1000 * 10 // --> 1 min for now
   },
 }))
 
@@ -107,12 +107,13 @@ app.post('/signup', (req, res) => {
 })
 
 app.get("/signup", (req, res) => {
-  if (req.session.error) {
-    console.log(req.session.error);
-    res.send(req.session.error)
-  }
+  // if (req.session.error) {
+  console.log(req.session.error);
+  res.send(req.session.error)
+  // }
 })
 // -----------/SIGN UP-----------
+
 
 // -----------SIGN IN-----------
 app.post("/signin", (req, res) => {
@@ -128,7 +129,7 @@ app.post("/signin", (req, res) => {
         if (err) {
           console.log("SELECT ERROR");
         }
-        if(result.rows.length === 0) {
+        if (result.rows.length === 0) {
           console.log("NO USER EXIST FOR THIS EMAIL");
           req.session.error = "No user exist for this email"
           res.redirect("/signin")
@@ -136,14 +137,14 @@ app.post("/signin", (req, res) => {
           bcrypt.compare(password, result.rows[0].password, (error, isMatch) => {
             if (isMatch) {
               const id = result.rows[0].id
-              const token = jwt.sign({id}, process.env.NODE_JWT_SECRET, {
+              const token = jwt.sign({ id }, process.env.NODE_JWT_SECRET, {
                 expiresIn: 300,
               })
 
               req.session.token = token
               req.session.loggedIn = true
-              req.session.firstName = result.rows[0].firstName
-              req.session.lastName = result.rows[0].lastName
+              req.session.firstName = result.rows[0].f_name
+              req.session.lastName = result.rows[0].l_name
               req.session.email = result.rows[0].email
               req.session.uid = result.rows[0].id
 
@@ -161,13 +162,62 @@ app.post("/signin", (req, res) => {
 })
 
 app.get("/signin", (req, res) => {
-  if (req.session.error) {
-    console.log(req.session.error);
-    res.send(req.session.error)
-  }
+  // if (req.session.error) {
+  console.log(req.session.error);
+  res.send(req.session.error)
+  // }
 })
 // -----------/SIGN IN-----------
 
+
+// -----------AUTH-----------
+const verifyJWT = (req, res, next) => {
+  const token = req.session.token
+
+  if (!token) {
+    console.log("TOKEN IS NOT IN SESSION");
+    res.send("yo you need a token")
+  } else {
+    jwt.verify(token, process.env.NODE_JWT_SECRET, (err, decoded) => {
+      if (err) {
+        res.json({auth: false, message: "You fauled to authenticate"})
+      } else {
+        console.log("JWT verified");
+        next()
+      }
+    })
+  }
+}
+
+// session ==> token, loggedin, firstName, lastName, email,uid
+app.get("/auth", verifyJWT ,(req, res) => {
+  // if (req.session.loggedIn) {
+  if (req.session.token) {
+    res.send({
+      loggedIn: req.session.loggedIn,
+      token: req.session.token,
+      firstName: req.session.firstName,
+      lastName: req.session.lastName,
+      email: req.session.email,
+      uid: req.session.uid
+    })
+  }
+})
+// -----------/AUTH-----------
+
+
+// -----------/LOGOUT-----------
+app.post("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log("COULD NOT DESTROY SESSION");
+    }
+    // res.redirect('/signin')
+    console.log("REQ.SESSION: ", req.session);
+  })
+})
+
+// -----------LOGOUT-----------
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))

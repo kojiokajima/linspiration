@@ -6,13 +6,13 @@ import axios from 'axios'
 
 const SignIn = () => {
   console.log("SIGNIN RENDERED");
-  const [error, setError]  = useState("No error")
+  const [error, setError]  = useState("")
 
 
   useEffect(() => {
     console.log("USE EFFECT IN SIGNIN EVOKED");
     axios.get('/signin').then((response) => {
-      if (response) {
+      if (response.data.length < 50) {
         console.log(response);
         setError(response.data)
       }
