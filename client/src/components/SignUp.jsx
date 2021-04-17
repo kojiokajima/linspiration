@@ -12,7 +12,6 @@ import {Link} from 'react-router-dom'
 const SignUp = () => {
   axios.defaults.withCredentials = true
 
-
   return (
     <div className="signup">
       <div className="signup-hero">
@@ -20,6 +19,7 @@ const SignUp = () => {
         {/* some image */}
       </div>
       <form className="signup-form" action="/signup" method="POST">
+      {/* <form className="signup-form" action="http://localhost:3001/signup" method="POST"> */}
         <label htmlFor="">Name</label>
         <TextInput id="firstName" icon="person_outline" label="First Name" name="firstName" />
         <TextInput id="lastName" icon="person_outline" label="Last Name" name="lastName" />
@@ -28,8 +28,8 @@ const SignUp = () => {
         <TextInput id="email" icon="email" label="Email" name="email" email={true} email={true} />
         <br/>
         <label htmlFor="">Password</label>
-        <TextInput id="password" icon="vpn_key" label="Password" name="password" password={true} />
-        <TextInput id="confirm-password" icon="vpn_key" label="Confirm Password" name="confirmPassword" password={true} />
+        <TextInput id="password" icon="vpn_key" label="Password" name="password" />
+        <TextInput id="confirm-password" icon="vpn_key" label="Confirm Password" name="confirmPassword" />
         <br/><br/><br/>
         <Button type="submit" waves="light">Register<Icon right >send</Icon></Button>
         <br/><br/>

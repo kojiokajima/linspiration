@@ -10,8 +10,8 @@ const SignIn = () => {
         <img src={Hero} alt="" />
         {/* some image */}
       </div>
-      {/* <form className="signin-form" action="/signin" method="POST"> */}
-      <form className="signin-form" action="http://localhost:3001/signin" method="POST">
+      <form className="signin-form" action="/signin" method="POST">
+      {/* <form className="signin-form" action="http://localhost:3001/signin" method="POST"> */}
         <label htmlFor="">Email</label>
         <TextInput id="email" icon="email" label="Email" name="email" email={true}  />
         <br/>
