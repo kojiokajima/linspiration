@@ -46,6 +46,7 @@ pool.connect((err, res) => {
   }
 })
 
+// -----------SIGN UP-----------
 app.post('/signup', (req, res) => {
   const firstName = req.body.firstName
   const lastName = req.body.lastName
@@ -54,8 +55,14 @@ app.post('/signup', (req, res) => {
   const confirmPassword = req.body.confirmPassword
 
   if (firstName == "" || lastName == "" || email == "" || password == "" || confirmPassword == "") {
-    res.redirect("http://localhost:3000/signup")
+    console.log("SOME INPUT IS BLANK");
+    req.session.error = "Please fill in all fields"
+    res.redirect("/signup")
     // res.redirect('/signup')
+  } else if(password !== confirmPassword) {
+    console.log("PASSWORD DOES NOT MATCH");
+    req.session.error = "Passwords do not match"
+    res.redirect("/signup")
   } else {
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) {
@@ -74,7 +81,6 @@ app.post('/signup', (req, res) => {
                 res.redirect("/signup")
               } else {
                 console.log("USER ADDED");
-                // res.redirect("http://localhost:3000/signin")
                 res.redirect("/signin")
               }
             }
@@ -85,6 +91,14 @@ app.post('/signup', (req, res) => {
   }
 
 })
+
+app.get("/signup", (req, res) => {
+  if (req.session.error) {
+    res.send(req.session.error)
+  }
+})
+// -----------SIGN UP-----------
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))

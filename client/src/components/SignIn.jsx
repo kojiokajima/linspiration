@@ -1,9 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Hero from '../assets/images/dog01.jpg'
 import {TextInput, Button, Icon} from 'react-materialize'
 import {Link} from 'react-router-dom'
 
 const SignIn = () => {
+
+  useEffect(() => {
+    console.log("USE EFFECT IN SIGNIN EVOKED");
+  }, [])
+
+  console.log("SIGNIN RENDERED");
+
   return (
     <div className="signin">
       <div className="signin-hero">

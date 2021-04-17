@@ -1,7 +1,6 @@
 import React from 'react'
 import {BrowserRouter} from 'react-router-dom'
 import Router from './Router'
-import logo from './logo.svg';
 import './App.css';
 import './assets/styles/main.scss'
 
