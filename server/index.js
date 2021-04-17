@@ -108,6 +108,7 @@ app.post('/signup', (req, res) => {
 
 app.get("/signup", (req, res) => {
   if (req.session.error) {
+    console.log(req.session.error);
     res.send(req.session.error)
   }
 })
@@ -117,16 +118,53 @@ app.get("/signup", (req, res) => {
 app.post("/signin", (req, res) => {
   const email = req.body.email
   const password = req.body.password
+  req.session.error = ""
 
   pool.connect((err, db) => {
     db.query(
-      'SELECT * FROM users where email'
+      'SELECT * FROM users where email = $1',
+      [email],
+      (err, result) => {
+        if (err) {
+          console.log("SELECT ERROR");
+        }
+        if(result.rows.length === 0) {
+          console.log("NO USER EXIST FOR THIS EMAIL");
+          req.session.error = "No user exist for this email"
+          res.redirect("/signin")
+        } else {
+          bcrypt.compare(password, result.rows[0].password, (error, isMatch) => {
+            if (isMatch) {
+              const id = result.rows[0].id
+              const token = jwt.sign({id}, process.env.NODE_JWT_SECRET, {
+                expiresIn: 300,
+              })
+
+              req.session.token = token
+              req.session.loggedIn = true
+              req.session.firstName = result.rows[0].firstName
+              req.session.lastName = result.rows[0].lastName
+              req.session.email = result.rows[0].email
+              req.session.uid = result.rows[0].id
+
+              res.redirect("/dashboard/" + req.session.uid)
+            } else {
+              console.log("PASSWORD IS NOT CORRECT");
+              req.session.error = "Password is not correct"
+              res.redirect("/signin")
+            }
+          })
+        }
+      }
     )
   })
 })
 
 app.get("/signin", (req, res) => {
-
+  if (req.session.error) {
+    console.log(req.session.error);
+    res.send(req.session.error)
+  }
 })
 // -----------/SIGN IN-----------
 
