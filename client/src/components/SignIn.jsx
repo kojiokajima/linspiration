@@ -1,15 +1,17 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Hero from '../assets/images/dog01.jpg'
 import {TextInput, Button, Icon} from 'react-materialize'
 import {Link} from 'react-router-dom'
 
 const SignIn = () => {
+  console.log("SIGNIN RENDERED");
+  const [error, setError]  = useState("")
+
 
   useEffect(() => {
     console.log("USE EFFECT IN SIGNIN EVOKED");
   }, [])
 
-  console.log("SIGNIN RENDERED");
 
   return (
     <div className="signin">
@@ -20,10 +22,10 @@ const SignIn = () => {
       <form className="signin-form" action="/signin" method="POST">
       {/* <form className="signin-form" action="http://localhost:3001/signin" method="POST"> */}
         <label htmlFor="">Email</label>
-        <TextInput id="email" icon="email" label="Email" name="email" email={true}  />
+        <TextInput id="email" icon="email" label="Email" name="email" />
         <br/>
         <label htmlFor="">Password</label>
-        <TextInput id="password" icon="vpn_key" label="Password" name="password" password={true} />
+        <TextInput id="password" icon="vpn_key" label="Password" name="password" />
         <br/><br/><br/>
         <Button type="submit" waves="light">Login<Icon right >send</Icon></Button>
         <br/><br/>

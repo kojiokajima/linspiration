@@ -53,13 +53,14 @@ app.post('/signup', (req, res) => {
   const email = req.body.email
   const password = req.body.password
   const confirmPassword = req.body.confirmPassword
+  req.session.error = ""
 
   if (firstName == "" || lastName == "" || email == "" || password == "" || confirmPassword == "") {
     console.log("SOME INPUT IS BLANK");
     req.session.error = "Please fill in all fields"
     res.redirect("/signup")
     // res.redirect('/signup')
-  } else if(password !== confirmPassword) {
+  } else if (password !== confirmPassword) {
     console.log("PASSWORD DOES NOT MATCH");
     req.session.error = "Passwords do not match"
     res.redirect("/signup")
@@ -72,16 +73,29 @@ app.post('/signup', (req, res) => {
       } else {
         pool.connect((err, db) => {
           db.query(
-            "INSERT INTO users (f_name, l_name, email, password) VALUES ($1, $2, $3, $4)",
-            [firstName, lastName, email, hash],
-            (error, results) => {
-              if (error) {
-                console.log("FAILED TO INSERT USER");
-                console.log(error);
-                res.redirect("/signup")
+            "SELECT * FROM users where email = $1",
+            [email],
+            (erro, result) => {
+              if (result.rows.length > 0) {
+                console.log("EMAIL ALREADY REGISTERED");
+                console.log(result);
+                req.session.error = "This email has already been registered"
+                res.redirect('/signup')
               } else {
-                console.log("USER ADDED");
-                res.redirect("/signin")
+                db.query(
+                  "INSERT INTO users (f_name, l_name, email, password) VALUES ($1, $2, $3, $4)",
+                  [firstName, lastName, email, hash],
+                  (error, results) => {
+                    if (error) {
+                      console.log("FAILED TO INSERT USER");
+                      console.log(error);
+                      res.redirect("/signup")
+                    } else {
+                      console.log("USER ADDED");
+                      res.redirect("/signin")
+                    }
+                  }
+                )
               }
             }
           )
@@ -97,7 +111,24 @@ app.get("/signup", (req, res) => {
     res.send(req.session.error)
   }
 })
-// -----------SIGN UP-----------
+// -----------/SIGN UP-----------
+
+// -----------SIGN IN-----------
+app.post("/signin", (req, res) => {
+  const email = req.body.email
+  const password = req.body.password
+
+  pool.connect((err, db) => {
+    db.query(
+      'SELECT * FROM users where email'
+    )
+  })
+})
+
+app.get("/signin", (req, res) => {
+
+})
+// -----------/SIGN IN-----------
 
 
 app.get("*", (req, res) => {

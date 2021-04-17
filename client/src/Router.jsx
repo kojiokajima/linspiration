@@ -1,6 +1,6 @@
-import React from 'react'
-import {Switch, Route} from 'react-router-dom'
-import { SignUp, SignIn, Dashboard} from './components/index'
+import React from "react";
+import { Switch, Route } from "react-router-dom";
+import { SignUp, SignIn, Dashboard } from "./components/index";
 
 const Router = () => {
   return (
@@ -9,7 +9,7 @@ const Router = () => {
       <Route path="/signin" component={SignIn} />
       <Route path="/dashboard/:id" component={Dashboard} />
     </Switch>
-  )
-}
+  );
+};
 
-export default Router
+export default Router;
