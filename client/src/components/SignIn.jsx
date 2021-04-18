@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import Hero from '../assets/images/dog01.jpg'
+import Hero from '../assets/images/hero01.JPG'
 import {TextInput, Button, Icon} from 'react-materialize'
 import {Link} from 'react-router-dom'
 import axios from 'axios'

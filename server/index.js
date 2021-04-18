@@ -27,7 +27,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 10 // --> 1 min for now
+    maxAge: 1000 * 5 // --> 1 min for now
   },
 }))
 
@@ -39,8 +39,8 @@ const pool = new Pool({
 pool.connect((err, res) => {
   if (err) {
     console.log("FAILED TO CONNECT TO DATABASE");
-    console.log(pool);
-    console.log(err);
+    // console.log(pool);
+    // console.log(err);
   } else {
     console.log("CONNECTED TO DATABASE");
   }
@@ -108,7 +108,7 @@ app.post('/signup', (req, res) => {
 
 app.get("/signup", (req, res) => {
   // if (req.session.error) {
-  console.log(req.session.error);
+  // console.log(req.session.error);
   res.send(req.session.error)
   // }
 })
@@ -163,7 +163,7 @@ app.post("/signin", (req, res) => {
 
 app.get("/signin", (req, res) => {
   // if (req.session.error) {
-  console.log(req.session.error);
+  // console.log(req.session.error);
   res.send(req.session.error)
   // }
 })
@@ -173,14 +173,16 @@ app.get("/signin", (req, res) => {
 // -----------AUTH-----------
 const verifyJWT = (req, res, next) => {
   const token = req.session.token
+  console.log("TOKEN(REQ.SESSION.TOKEN): ", token);
+  console.log("REQ.SESION: ", req.session);
 
   if (!token) {
     console.log("TOKEN IS NOT IN SESSION");
-    res.send("yo you need a token")
+    res.redirect('/signin')
   } else {
     jwt.verify(token, process.env.NODE_JWT_SECRET, (err, decoded) => {
       if (err) {
-        res.json({auth: false, message: "You fauled to authenticate"})
+        res.json({auth: false, message: "You fauled to authenticate"});
       } else {
         console.log("JWT verified");
         next()

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { TextInput, Button, Icon } from "react-materialize";
 // import styled from 'styled-components'
-import Hero from '../assets/images/dog01.jpg'
+import Hero from '../assets/images/hero01.JPG'
 import axios from 'axios'
 import {Link} from 'react-router-dom'
 
