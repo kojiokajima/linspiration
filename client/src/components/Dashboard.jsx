@@ -27,7 +27,6 @@ const Dashboard = () => {
         setFirstName(localStorage.getItem("firstName"))
       } else {
         localStorage.clear()
-        console.log("IN ELSE");
         setSessionExpired(true)
       }
     })
