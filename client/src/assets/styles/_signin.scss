@@ -1,8 +1,8 @@
-.signup {
+.signin {
   display: flex;
   justify-content: space-between;
 
-  & .signup-hero {
+  & .signin-hero {
     border: 1px solid #000;
     width: 50vw;
     height: 100vh;
@@ -16,18 +16,19 @@
   }
 
 
-  & .signup-form {
+  & .signin-form {
     & form {
       position: relative;
       border: 1px solid #000;
       width: 50vw;
       height: 100vh;
+      // margin: 2rem;
       padding: 5rem;
       // display: flex;
       // flex-direction: column;
       // align-items:center;
       // align-items: stretch;
-
+  
       & .error-message {
         position: absolute;
         color: red;

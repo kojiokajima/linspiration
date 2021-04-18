@@ -1,12 +1,18 @@
 import React from 'react'
 import {BrowserRouter} from 'react-router-dom'
 import Router from './Router'
-import logo from './logo.svg';
 import './App.css';
+import './assets/styles/main.scss'
+import {Button} from "react-materialize"
 
 function App() {
+
+  const resetLocal = () => {
+    localStorage.clear()
+  }
   return (
     <div className="App">
+    {/* <div> */}
       <BrowserRouter>
         <Router />
       </BrowserRouter>
@@ -24,6 +30,9 @@ function App() {
           Learn React
         </a>
       </header> */}
+      <br/>
+      <Button waves="light" onClick={resetLocal}>reset local</Button>
+
     </div>
   );
 }
