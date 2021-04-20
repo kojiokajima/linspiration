@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import {Link, Redirect} from 'react-router-dom'
-import {Button} from 'react-materialize'
+import {Button, Textarea, Row, Col, CardPanel} from 'react-materialize'
 
 const Dashboard = () => {
   const [firstName, setFirstName] = useState("")
   const [sessionExpired, setSessionExpired] = useState(false)
-  
+  const [posts, setPosts] = useState([])
   
   const logout = () => {
     localStorage.clear()
@@ -30,13 +30,46 @@ const Dashboard = () => {
         setSessionExpired(true)
       }
     })
+
+    axios.get('/getpost').then(response => {
+      console.log("GETPOST EVOKED");
+      const data = response.data;
+      console.log("DATA IS ", data);
+      if (data.length > 0) {
+        setPosts(data)
+      }
+    })
   }, [])
 
 
   if (!sessionExpired) {
     return (
-      <div>
+      <div className="dashboard">
         <h3>Hello {firstName}</h3>
+      <br/>
+        {
+          posts.map((post) => (
+            <Col
+              m={6}
+              s={12}
+            >
+              <CardPanel key={post.id} className="teal">
+                <span className="white-text">
+                  {post.content}
+                </span>
+              </CardPanel>
+            </Col>
+          ))
+        }
+      <br/>
+      <div className="post-form">
+        <form action="/post" method="POST">
+          {/* <Row> */}
+          <Textarea id="post-form" name="ideaContent" placeholder="What is your idea?" />
+          <Button node="button"  waves="light" >POST</Button>
+          {/* </Row> */}
+        </form>
+      </div>
       <br/>
       <Link to="/signin">
         <Button waves="light" onClick={logout} >Logout</Button>
