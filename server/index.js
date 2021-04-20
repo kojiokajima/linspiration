@@ -18,7 +18,7 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(cors({
   // origin: ["http://localhost:3000"],
-  origin: port === 3050 ? ["http://localhost:3000"] : ["https://linspiration.herokuapp.com/"],
+  origin: port === 3050 ? ["http://localhost:3000"] : ["https://linspiration.herokuapp.com"],
   methods: ["GET", "POST"],
   credentials: true,
 }))
