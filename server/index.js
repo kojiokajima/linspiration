@@ -17,7 +17,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static(path.join(__dirname, '../client/build')))
 app.use(cors({
-  origin: ["http://localhost:3000"],
+  // origin: ["http://localhost:3000"],
+  origin: port === 3050 ? ["http://localhost:3000"] : ["https://linspiration.herokuapp.com/"],
   methods: ["GET", "POST"],
   credentials: true,
 }))
@@ -27,7 +28,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    maxAge: 1000 * 60 // --> 1 min for now
+    maxAge: 1000 * 60 * 10
   },
 }))
 
@@ -182,7 +183,7 @@ const verifyJWT = (req, res, next) => {
   } else {
     jwt.verify(token, process.env.NODE_JWT_SECRET, (err, decoded) => {
       if (err) {
-        res.json({auth: false, message: "You fauled to authenticate"});
+        res.json({ auth: false, message: "You fauled to authenticate" });
       } else {
         console.log("JWT verified");
         next()
@@ -192,7 +193,7 @@ const verifyJWT = (req, res, next) => {
 }
 
 // session ==> token, loggedin, firstName, lastName, email,uid
-app.get("/auth", verifyJWT ,(req, res) => {
+app.get("/auth", verifyJWT, (req, res) => {
   // if (req.session.loggedIn) {
   if (req.session.token) {
     res.send({
@@ -208,7 +209,7 @@ app.get("/auth", verifyJWT ,(req, res) => {
 // -----------/AUTH-----------
 
 
-// -----------/LOGOUT-----------
+// -----------LOGOUT-----------
 app.post("/logout", (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -219,7 +220,66 @@ app.post("/logout", (req, res) => {
   })
 })
 
-// -----------LOGOUT-----------
+// -----------/LOGOUT-----------
+
+
+
+// -----------POST-----------
+app.post("/post", (req, res) => {
+  const content = req.body.ideaContent
+  const uid = req.session.uid
+  console.log("CONTENT IS ", content);
+
+  pool.connect((er, db) => {
+    if (er) {
+      console.log("COULD NOT CONNECT TO DATABASE");
+      res.send("COULD NOT TONNECT TO DATABSE")
+    }
+    if (uid) {
+      db.query(
+        "INSERT INTO posts (user_id, content, created_at, updated_at) VALUES ($1, $2, now(), now())",
+        [uid, content],
+        (err, result) => {
+          if (err) {
+            console.log("COULD NOT INSERT DATA");
+            console.log(err);
+            res.send("COULD NOT INSERT DATA")
+          } else {
+            console.log("POST ADDED");
+            res.redirect("/dashboard/" + uid)
+          }
+        }
+      )
+    } else {
+      res.redirect('/signin')
+    }
+  })
+})
+
+app.get('/getpost', (req, res) => {
+  pool.connect((er, db) => {
+    if (er) {
+      console.log("COULD NOT CONNECT TO DATABSE");
+      res.send("COULD NOT CONNECT TO DATABSE")
+    } else {
+      db.query(
+        "SELECT * FROM posts",
+        (error, results) => {
+          if (error) {
+            console.log("COULD NOT GET DATA");
+            res.send("COULD NOT GET DATA")
+          } else {
+            res.send(results.rows)
+          }
+        }
+      )
+    }
+  })
+})
+// -----------/POST-----------
+
+
+
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, '../client/build/index.html'))
