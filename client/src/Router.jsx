@@ -5,6 +5,7 @@ import { SignUp, SignIn, Dashboard } from "./components/index";
 const Router = () => {
   return (
     <Switch>
+      <Route exact path="/" component={SignIn} />
       <Route exact path="/signup" component={SignUp} />
       <Route path="/signin" component={SignIn} />
       <Route path="/dashboard/:id" component={Dashboard} />
