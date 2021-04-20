@@ -8,7 +8,7 @@ const path = require("path")
 const { Pool } = require("pg")
 
 
-const port = process.eventNames.PORT || 3050
+const port = process.env.PORT || 3050
 const app = express()
 require("dotenv").config()
 
